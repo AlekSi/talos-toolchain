@@ -1,0 +1,48 @@
+name: rework-cross-musl
+variant: scratch
+dependencies:
+  - stage: rework-build
+  - stage: rework-cross-binutils
+  - stage: rework-cross-gcc
+steps:
+  - sources:
+      - url: https://www.musl-libc.org/releases/musl-{{ .musl_version }}.tar.gz
+        destination: musl.tar.gz
+        sha256: "{{ .musl_sha256 }}"
+        sha512: "{{ .musl_sha512 }}"
+    env:
+      PATH: "/bootstrap/bin:{{ .PATH }}"
+    prepare:
+      - tar -xzf musl.tar.gz --strip-components=1
+      - |
+        mkdir build
+        cd build
+
+        ../configure \
+          --build=${BUILD} \
+          --host=${HOST} \
+          --target=${TARGET} \
+          --prefix=/bootstrap \
+          --syslibdir=/bootstrap/lib \
+        | tee configure.txt
+
+        grep -F 'checking for C compiler... x86_64-talos-linux-musl-gcc' configure.txt
+    build:
+      - |
+        cd build
+        make -j $(nproc)
+    install:
+      - |
+        cd build
+        make install | tee install.txt
+        grep -F '../include/limits.h /bootstrap/include/limits.h' install.txt
+    test:
+      - |
+        echo 'int main(){}' > dummy.c
+        which -a gcc
+        /bootstrap/bin/${TARGET}-gcc dummy.c
+        readelf -l a.out | tee | grep ": {{ .TOOLCHAIN }}"
+        exit 1
+finalize:
+  - from: /bootstrap
+    to: /bootstrap

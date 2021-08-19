@@ -14,6 +14,7 @@ steps:
       - |
         mkdir build
         cd build
+
         ../configure \
           --build=${BUILD} \
           --host=${HOST} \
@@ -35,9 +36,9 @@ steps:
     test:
       - |
         readelf -l /bootstrap/bin/${TARGET}-ld | tee readelf.txt
-        grep -qF 'interpreter: /lib/ld-musl-x86_64.so.1' readelf.txt
+        grep -F 'interpreter: /lib/ld-musl-x86_64.so.1' readelf.txt
         /bootstrap/bin/${TARGET}-ld --verbose | tee ld.txt
-        grep -qF 'SEARCH_DIR("=/bootstrap/x86_64-talos-linux-musl/lib64")' ld.txt
+        grep -F 'SEARCH_DIR("=/bootstrap/x86_64-talos-linux-musl/lib64")' ld.txt
 finalize:
   - from: /bootstrap
     to: /bootstrap

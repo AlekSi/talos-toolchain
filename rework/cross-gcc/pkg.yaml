@@ -3,7 +3,6 @@ name: rework-cross-gcc
 variant: scratch
 dependencies:
   - stage: rework-build
-  - stage: rework-cross-binutils
 steps:
   - sources:
       - url: https://ftp.gnu.org/gnu/gcc/gcc-{{ .gcc_version }}/gcc-{{ .gcc_version }}.tar.xz
@@ -52,8 +51,8 @@ steps:
         #     touch $file.orig
         # done
 
-        # sed -e '/m64=/s/lib64/lib/' -i.orig ../gcc/config/i386/t-linux64
-        # sed -e '/mabi.lp64=/s/lib64/lib/' -i.orig ../gcc/config/aarch64/t-aarch64-linux
+        sed -e '/m64=/s/lib64/lib/' -i.orig ../gcc/config/i386/t-linux64
+        sed -e '/mabi.lp64=/s/lib64/lib/' -i.orig ../gcc/config/aarch64/t-aarch64-linux
 
         # --disable-bootstrap \
         # --disable-gnu-indirect-function \
@@ -89,8 +88,10 @@ steps:
           --enable-languages=c,c++ \
         | tee configure.txt
 
-        grep -qF 'checking for ld... /bootstrap/x86_64-talos-linux-musl/bin/ld' configure.txt
-        grep -qF 'checking where to find the target ld... pre-installed in /bootstrap/x86_64-talos-linux-musl/bin' configure.txt
+        # grep -F 'checking for ld... /bootstrap/x86_64-talos-linux-musl/bin/ld' configure.txt
+        grep -F 'checking for ld... no' configure.txt
+        # grep -F 'checking where to find the target ld... pre-installed in /bootstrap/x86_64-talos-linux-musl/bin' configure.txt
+        grep -F 'checking where to find the target ld... pre-installed' configure.txt
     build:
       - |
         cd build
@@ -99,15 +100,15 @@ steps:
       - |
         cd build
         make install-strip | tee install.txt
-        grep -qF '/bootstrap/libexec/gcc/x86_64-talos-linux-musl/11.2.0' install.txt
-        grep -qF '/bootstrap/lib/../lib' install.txt
-        grep -qF '/bootstrap/lib/gcc/x86_64-talos-linux-musl/11.2.0/plugin' install.txt
+        grep -F '/bootstrap/libexec/gcc/x86_64-talos-linux-musl/11.2.0' install.txt
+        grep -F '/bootstrap/lib/../lib' install.txt
+        grep -F '/bootstrap/lib/gcc/x86_64-talos-linux-musl/11.2.0/plugin' install.txt
 
         # TODO fix limits.h?
     test:
       - |
         readelf -l /bootstrap/bin/${TARGET}-gcc | tee readelf.txt
-        grep -qF 'interpreter: /lib/ld-musl-x86_64.so.1' readelf.txt
+        grep -F 'interpreter: /lib/ld-musl-x86_64.so.1' readelf.txt
 finalize:
   - from: /bootstrap
     to: /bootstrap
