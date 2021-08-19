@@ -1,5 +1,6 @@
 ---
 name: rework-cross-binutils
+variant: scratch
 dependencies:
   - stage: rework-build
 steps:
@@ -21,11 +22,13 @@ steps:
         --with-sysroot=${TOOLCHAIN} \
         --disable-nls \
         --disable-werror \
-        --enable-deterministic-archives
+        --enable-deterministic-archives \
+        tee configure.txt
     build:
       - cd build && make -j $(nproc)
     install:
       - cd build && make install
+      - rm -fr /bootstrap/share/man/ /bootstrap/share/info/
     test:
       - |
         readelf -l /bootstrap/bin/${TARGET}-ld | tee ld.txt

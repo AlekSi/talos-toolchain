@@ -1,7 +1,8 @@
 ---
 name: rework-toolchain
+variant: scratch
 dependencies:
-  - stage: rework-cross-binutils
+  - stage: rework-cross-gcc
 steps:
   - test:
       - |
