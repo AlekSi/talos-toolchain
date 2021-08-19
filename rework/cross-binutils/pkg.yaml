@@ -15,15 +15,15 @@ steps:
         mkdir build
         cd build
         ../configure \
-        --build=${BUILD} \
-        --host=${HOST} \
-        --target=${TARGET} \
-        --prefix=/bootstrap \
-        --with-sysroot=${TOOLCHAIN} \
-        --disable-nls \
-        --disable-werror \
-        --enable-deterministic-archives \
-        tee configure.txt
+          --build=${BUILD} \
+          --host=${HOST} \
+          --target=${TARGET} \
+          --prefix=/bootstrap \
+          --with-sysroot=${TOOLCHAIN} \
+          --disable-nls \
+          --disable-werror \
+          --enable-deterministic-archives \
+        | tee configure.txt
     build:
       - cd build && make -j $(nproc)
     install:
@@ -33,7 +33,6 @@ steps:
       - |
         readelf -l /bootstrap/bin/${TARGET}-ld | tee ld.txt
         grep -qF 'interpreter: /lib/ld-musl-x86_64.so.1' ld.txt
-      - |
         /bootstrap/bin/${TARGET}-ld --verbose | tee ld.txt
         grep -qF 'SEARCH_DIR("=/bootstrap/x86_64-talos-linux-musl/lib64")' ld.txt
 finalize:

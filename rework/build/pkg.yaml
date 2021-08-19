@@ -27,6 +27,7 @@ install:
   # - xz
 steps:
   - test:
+      - env
       - |
         bash --version
         gcc --version
@@ -36,7 +37,6 @@ steps:
         readelf --version
         sh --version
         tree --version
-      - env
 finalize:
   - from: /
     to: /
