@@ -3,6 +3,7 @@ name: rework-toolchain
 variant: scratch
 dependencies:
   - stage: rework-cross-gcc
+  - stage: rework-linux-headers
 steps:
   - test:
       - |

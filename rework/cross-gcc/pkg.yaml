@@ -92,13 +92,22 @@ steps:
         grep -qF 'checking for ld... /bootstrap/x86_64-talos-linux-musl/bin/ld' configure.txt
         grep -qF 'checking where to find the target ld... pre-installed in /bootstrap/x86_64-talos-linux-musl/bin' configure.txt
     build:
-      - cd build && make -j $(nproc)
+      - |
+        cd build
+        make -j $(nproc)
     install:
-      - cd build && make install-strip
-      - exit 2
+      - |
+        cd build
+        make install-strip | tee install.txt
+        grep -qF '/bootstrap/libexec/gcc/x86_64-talos-linux-musl/11.2.0' install.txt
+        grep -qF '/bootstrap/lib/../lib' install.txt
+        grep -qF '/bootstrap/lib/gcc/x86_64-talos-linux-musl/11.2.0/plugin' install.txt
+
+        # TODO fix limits.h?
     test:
       - |
-        exit 1
+        readelf -l /bootstrap/bin/${TARGET}-gcc | tee readelf.txt
+        grep -qF 'interpreter: /lib/ld-musl-x86_64.so.1' readelf.txt
 finalize:
   - from: /bootstrap
     to: /bootstrap
