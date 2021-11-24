@@ -1,0 +1,18 @@
+---
+name: rework-toolchain
+variant: scratch
+dependencies:
+  - stage: rework-cross-gcc
+  - stage: rework-linux-headers
+  - stage: rework-cross-musl
+steps:
+  - test:
+      - |
+        echo 'int main(){}' > dummy.c
+        cc dummy.c
+        readelf -l a.out | tee a.txt
+        grep -F "interpreter: /lib/ld-musl-x86_64.so.1" a.txt
+        ./a.out
+finalize:
+  - from: /
+    to: /

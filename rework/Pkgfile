@@ -1,0 +1,41 @@
+# syntax = ghcr.io/talos-systems/bldr:v0.2.0-alpha.5-frontend
+
+# $LFS = /toolchain
+# $LFS/tools = /bootstrap (tools compiled with cross-compiler)
+
+format: v1alpha2
+
+vars:
+   # BOOTSTRAP: /bootstrap
+
+   binutils_version: 2.37
+   binutils_sha256: 820d9724f020a3e69cb337893a0b63c2db161dadcb0e06fc11dc29eb1e84a32c
+   binutils_sha512: 5c11aeef6935860a6819ed3a3c93371f052e52b4bdc5033da36037c1544d013b7f12cb8d561ec954fe7469a68f1b66f1a3cd53d5a3af7293635a90d69edd15e7
+
+   gcc_version: 11.2.0
+   gcc_sha256: d08edc536b54c372a1010ff6619dd274c0f1603aa49212ba20f7aa2cda36fa8b
+   gcc_sha512: d53a0a966230895c54f01aea38696f818817b505f1e2bfa65e508753fcd01b2aedb4a61434f41f3a2ddbbd9f41384b96153c684ded3f0fa97c82758d9de5c7cf
+
+   mpfr_version: 4.1.0
+   mpfr_sha256: 0c98a3f1732ff6ca4ea690552079da9c597872d30e96ec28414ee23c95558a7f
+   mpfr_sha512: 1bd1c349741a6529dfa53af4f0da8d49254b164ece8a46928cdb13a99460285622d57fe6f68cef19c6727b3f9daa25ddb3d7d65c201c8f387e421c7f7bee6273
+
+   gmp_version: 6.2.1
+   gmp_sha256: fd4829912cddd12f84181c3451cc752be224643e87fac497b69edddadc49b4f2
+   gmp_sha512: c99be0950a1d05a0297d65641dd35b75b74466f7bf03c9e8a99895a3b2f9a0856cd17887738fa51cf7499781b65c049769271cbcb77d057d2e9f1ec52e07dd84
+
+   mpc_version: 1.2.1
+   mpc_sha256: 17503d2c395dfcf106b622dc142683c1199431d095367c6aacba6eec30340459
+   mpc_sha512: 3279f813ab37f47fdcc800e4ac5f306417d07f539593ca715876e43e04896e1d5bceccfb288ef2908a3f24b760747d0dbd0392a24b9b341bc3e12082e5c836ee
+
+   linux_series: v5.x
+   linux_version: 5.10.54
+   linux_sha256: bf50c63261847187eca4a1793e5df5c1355b21697409589f6ca03e32b629be44
+   linux_sha512: a46ca0d12baf81f5f0f2d1cae89747beb844f8f1cb5875bc5f44317ea4314eb833bd24464429605aff55bc2dd39bac24df89768a5a804fd71965ff386995db34
+
+   musl_version: 1.2.2
+   musl_sha256: 9b969322012d796dc23dda27a35866034fa67d8fb67e0e2c45c913c3d43219dd
+   musl_sha512: 5344b581bd6463d71af8c13e91792fa51f25a96a1ecbea81e42664b63d90b325aeb421dfbc8c22e187397ca08e84d9296a0c0c299ba04fa2b751d6864914bd82
+
+labels:
+   org.opencontainers.image.source: https://github.com/talos-systems/toolchain

@@ -1,0 +1,24 @@
+---
+name: rework-linux-headers
+variant: scratch
+dependencies:
+  - stage: rework-build
+steps:
+  - sources:
+      - url: https://cdn.kernel.org/pub/linux/kernel/{{ .linux_series }}/linux-{{ .linux_version }}.tar.xz
+        destination: linux.tar.xz
+        sha256: "{{ .linux_sha256 }}"
+        sha512: "{{ .linux_sha512 }}"
+    prepare:
+      - tar -xJf linux.tar.xz --strip-components=1
+      - make mrproper
+    build:
+      - make headers
+    install:
+      - |
+        mkdir -p ${TOOLCHAIN}/include
+        rm usr/include/Makefile
+        cp -rv usr/include/*  ${TOOLCHAIN}/include
+finalize:
+  - from: /toolchain
+    to: /toolchain

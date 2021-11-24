@@ -1,0 +1,44 @@
+---
+name: rework-cross-binutils
+variant: scratch
+dependencies:
+  - stage: rework-build
+steps:
+  - sources:
+      - url: https://ftp.gnu.org/gnu/binutils/binutils-{{ .binutils_version }}.tar.xz
+        destination: binutils.tar.xz
+        sha256: "{{ .binutils_sha256 }}"
+        sha512: "{{ .binutils_sha512 }}"
+    prepare:
+      - tar -xJf binutils.tar.xz --strip-components=1
+      - |
+        mkdir build
+        cd build
+
+        ../configure \
+          --build=${BUILD} \
+          --host=${HOST} \
+          --target=${TARGET} \
+          --prefix=/bootstrap \
+          --with-sysroot=${TOOLCHAIN} \
+          --disable-nls \
+          --disable-werror \
+          --enable-deterministic-archives
+    build:
+      - |
+        cd build
+        make -j $(nproc)
+    install:
+      - |
+        cd build
+        make install
+      - rm -fr /bootstrap/share/man/ /bootstrap/share/info/
+    test:
+      - |
+        readelf -l /bootstrap/bin/${TARGET}-ld | tee readelf.txt
+        grep -F 'interpreter: /lib/ld-musl-x86_64.so.1' readelf.txt
+        /bootstrap/bin/${TARGET}-ld --verbose | tee ld.txt
+        grep -F 'SEARCH_DIR("=/bootstrap/x86_64-talos-linux-musl/lib64")' ld.txt
+finalize:
+  - from: /bootstrap
+    to: /bootstrap

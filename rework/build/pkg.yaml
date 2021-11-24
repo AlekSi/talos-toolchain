@@ -1,0 +1,42 @@
+---
+name: rework-build
+variant: alpine
+install:
+  - build-base
+  - tree
+  # - bash
+  # - binutils
+  # - bison
+  # - bzip2
+  # - coreutils
+  # - diffutils
+  # - findutils
+  # - gawk
+  # - gcc
+  # # FIXME - glibc
+  # - grep
+  # - gzip
+  # # FIXME linux kernel
+  # - m4
+  # - make
+  # - perl
+  # - python3
+  # - sed
+  # - tar
+  # - texinfo
+  # - xz
+steps:
+  - test:
+      - env
+      - |
+        bash --version
+        gcc --version
+        ld --version
+        make --version
+        patch --version
+        readelf --version
+        sh --version
+        tree --version
+finalize:
+  - from: /
+    to: /
